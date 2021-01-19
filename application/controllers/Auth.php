@@ -227,6 +227,7 @@ class Auth extends CI_Controller
 				$this->data['identity'] = [
 					'name' => 'identity',
 					'id' => 'identity',
+					'placeholder' => 'example@mail.com'
 				];
 
 				if ($this->config->item('identity', 'ion_auth') != 'email') {
@@ -237,7 +238,12 @@ class Auth extends CI_Controller
 
 				// set any errors and display the form
 				$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+				$this->data['title'] = "Deb.ly - Lupa Kata Sandi | Persingkat Tautan & Kustomisasi Tautan ";
+				$this->data['id'] = 0;
+				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'header', $this->data);
 				$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'forgot_password', $this->data);
+				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'footer', $this->data);
+				
 			} else {
 				$identity_column = $this->config->item('identity', 'ion_auth');
 				$identity = $this->ion_auth->where($identity_column, $this->input->post('identity'))->users()->row();
@@ -301,12 +307,14 @@ class Auth extends CI_Controller
 					'name' => 'new',
 					'id' => 'new',
 					'type' => 'password',
+					'placeholder' => "********",
 					'pattern' => '^.{' . $this->data['min_password_length'] . '}.*$',
 				];
 				$this->data['new_password_confirm'] = [
 					'name' => 'new_confirm',
 					'id' => 'new_confirm',
 					'type' => 'password',
+					'placeholder' => "********",
 					'pattern' => '^.{' . $this->data['min_password_length'] . '}.*$',
 				];
 				$this->data['user_id'] = [
@@ -317,9 +325,13 @@ class Auth extends CI_Controller
 				];
 				$this->data['csrf'] = $this->_get_csrf_nonce();
 				$this->data['code'] = $code;
-
-				// render
+				$this->data['title'] = "Deb.ly - Lupa Kata Sandi | Persingkat Tautan & Kustomisasi Tautan ";
+				$this->data['id'] = 0;
+				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'header', $this->data);
 				$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'reset_password', $this->data);
+				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'footer', $this->data);
+				// render
+				
 			} else {
 				$identity = $user->{$this->config->item('identity', 'ion_auth')};
 
@@ -370,7 +382,7 @@ class Auth extends CI_Controller
 		if ($activation) {
 			// redirect them to the auth page
 			$this->session->set_flashdata('message', $this->ion_auth->messages());
-			redirect("auth", 'refresh');
+			redirect("user/dashboard", 'refresh');
 		} else {
 			// redirect them to the forgot password page
 			$this->session->set_flashdata('message', $this->ion_auth->errors());
@@ -466,7 +478,7 @@ class Auth extends CI_Controller
 				// check to see if we are creating the user
 				// redirect them back to the admin page
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
-				redirect("login", 'refresh');
+				redirect("auth/resend_activation/" . base64_encode($email) . "/" . base64_encode(1));
 			} else {
 				// display the create user form
 				// set the flash data error message if there is one
@@ -534,6 +546,61 @@ class Auth extends CI_Controller
 				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'header', $this->data);
 				$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'create_user', $this->data);
 				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'footer', $this->data);
+			}
+		}
+	}
+	/**
+	 * Resend Activation
+	 */
+	public function resend_activation($email = "", $kode = "")
+	{
+		if ($this->ion_auth->logged_in() || empty($email) || empty($kode)) {
+			// redirect them to the login page
+			redirect('user/dashboard', 'refresh');
+		} else {
+			$this->data['title'] = $this->lang->line('forgot_password_heading');
+			$email_fix = base64_decode($email);
+			$kode = base64_decode($kode);
+			$this->data['email_user'] = $email_fix;
+			if (!isset($_POST['submit'])) {
+				$this->data['title'] = "Deb.ly - Terimakasih Telah Mendaftar | Persingkat Tautan & Kustomisasi Tautan ";
+				$this->data['id'] = 0;
+				if ($kode == 1) {
+					$this->data['info'] = "Kami mengirimkan kode aktivasi ke alamat email Anda " . $email_fix . " ,Silahkan periksa kontak masuk atau folder spam pada email Anda. Jika kode aktivasi tidak terkirim, silahkan tekan tombol dibawah ini untuk mengirimkan ulang kode aktivasi";
+				} else {
+					$this->data['info'] = "Kami gagal mengirimkan kode aktivasi ke alamat email Anda " . base64_decode($email_fix) . " ,silahkan periksa email Anda, atau jika masalah ini terus berlanjut silahkan hubungi Administrator Server";
+				}
+				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'header', $this->data);
+				$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'resend_activation', $this->data);
+				$this->_render_page('master' . DIRECTORY_SEPARATOR . 'footer', $this->data);
+			} else {
+				$identity_column = $this->config->item('identity', 'ion_auth');
+				$identity = $this->ion_auth->where($identity_column, $this->input->post('identity'))->users()->row();
+
+				if (empty($identity)) {
+
+					if ($this->config->item('identity', 'ion_auth') != 'email') {
+						$this->ion_auth->set_error('forgot_password_identity_not_found');
+					} else {
+						$this->ion_auth->set_error('forgot_password_email_not_found');
+					}
+					$this->session->set_flashdata('message', $this->ion_auth->errors());
+					redirect("auth/resend_activation/" . $email . "/" . base64_encode(0), "refresh");
+				}
+
+				// run the forgotten password method to email an activation code to the user
+				$forgotten = $this->ion_auth->forgotten_password($identity->{$this->config->item('identity', 'ion_auth')});
+
+				if ($forgotten) {
+					// if there were no errors
+					// $this->session->set_flashdata('message', $this->ion_auth->messages());
+
+					redirect("auth/resend_activation/" . $email . "/" . base64_encode(1), "refresh"); //we should display a confirmation page here instead of the login page
+				} else {
+					// $data = $this->session->set_flashdata('message', $this->ion_auth->errors());
+
+					redirect("auth/resend_activation/" . $email . "/" . base64_encode(0), "refresh");
+				}
 			}
 		}
 	}

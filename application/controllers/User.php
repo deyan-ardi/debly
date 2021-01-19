@@ -11,11 +11,11 @@ class User extends CI_Controller
         $sql = $this->All_model->getAllLinkWhereIP($ip);
         foreach ($sql as $data) {
             $cek_status = date_diff(date_create(), date_create($data['create_date']));
-            if ($cek_status->d > 90 && $data['akses'] == 0) {
+            if ($cek_status->i > 1 && $data['akses'] == 0) {
                 $this->All_model->changeStatus($data['new_url']);
             }
             // Jika sudah lebih dari 3 hari, maka history akan diset off
-            if ($cek_status->d >= 3 && $data['akses'] == 0) {
+            if ($cek_status->i >= 2 && $data['akses'] == 0) {
                 $this->All_model->changeHistory($data['new_url']);
                 $cookie_1 = "url-1";
                 $expire = time() - 1;
@@ -65,8 +65,8 @@ class User extends CI_Controller
                     if ($this->All_model->inputDataLinks($new_link, $old_link, $date, $ip)) {
                         $sql = $this->All_model->getAllLinkWhere($ip);
                         $cookie_1 = "url-1";
-                        // Cookie berlaku selama 3 hari
-                        $expire = time() + 259200;
+                        // Cookie berlaku selama 2 hari
+                        $expire = time() + 172800;
                         setcookie($cookie_1, json_encode($sql), $expire);
                         redirect("singkat");
                     } else {
@@ -182,14 +182,8 @@ class User extends CI_Controller
                     }
                     // input data
                     if ($this->All_model->inputDataLinksUser($new_link, $old_link, $date, $ip, $group[0]['id'])) {
-                        if ($this->All_model->setAllLinkWhereIP($ip, $group[0]['id'])) {
-                            $this->data['links'] = $this->All_model->getAllLinkWhereUser($group[0]['id']);
-                            $this->load->view("user/result-pro", $this->data);
-                        } else {
-                            $this->data['id_info'] = true;
-                            $this->data['info'] = "Terjadi Kegagalan Pada Sistem, Silahkan Hubungi Operator Website";
-                            $this->load->view("user/alert-pro", $this->data);
-                        }
+                        $this->data['links'] = $this->All_model->getAllLinkWhereUser($group[0]['id']);
+                        $this->load->view("user/result-pro", $this->data);
                     } else {
                         $this->data['id_info'] = true;
                         $this->data['info'] = "Terjadi Kegagalan Pada Sistem, Silahkan Hubungi Operator Website";
@@ -352,16 +346,16 @@ class User extends CI_Controller
                     $this->load->view("master/dash-header", $this->data);
                     $this->load->view("user/ubah-pro", $this->data);
                     $this->load->view("master/dash-footer", $this->data);
-                }else{
+                } else {
                     if (!empty($_POST['old'])) {
                         if (!filter_var($_POST['old'], FILTER_VALIDATE_URL) === false) {
-                        $enkrip = $this->encryption->encrypt($_POST['old']);
-                        if($this->All_model->updateLinkOld($enkrip, $_POST['id_url'])){
-                            redirect('user/tautan', 'refresh');
-                        }else{
-                            echo "Error";
+                            $enkrip = $this->encryption->encrypt($_POST['old']);
+                            if ($this->All_model->updateLinkOld($enkrip, $_POST['id_url'])) {
+                                redirect('user/tautan', 'refresh');
+                            } else {
+                                echo "Error";
+                            }
                         }
-                    }
                     }
                     if (!empty($_POST['new'])) {
                         $data = str_replace(' ', '', $_POST['new']);
@@ -373,7 +367,6 @@ class User extends CI_Controller
                             echo "Error";
                         }
                     }
-                    
                 }
             }
         }

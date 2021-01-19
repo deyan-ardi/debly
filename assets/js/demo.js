@@ -1,4 +1,18 @@
-$().ready(function() {
+var data = ` 
+ .d8888b.  888                       888    
+d88P  Y88b 888                       888    Ini merupakan area berbahaya terutama bagi anda 
+Y88b.      888                       888    yang tidak memahaminya. Jika seseorang meminta 
+ 'Y888b.   888888  .d88b.  88888b.   888    Anda untuk menyalin-menempel sesuatu 
+    'Y88b. 888    d88''88b 888 '88b  888    di sini untuk mengaktifkan fitur pada website 
+      '888 888    888  888 888  888  Y8Y    atau "meretas" akun seseorang, ini adalah 
+Y88b  d88P Y88b.  Y88..88P 888 d88P         penipuan dan akan memberikannya akses 
+ 'Y8888P'   'Y888  'Y88P'  88888P'   888    ke akun Pribadi Anda. Berhati-hatilah !!
+                           888              
+                           888              
+                           888   
+`;
+console.log(data); 
+$().ready(function () {
     $sidebar = $('.sidebar');
     $profil = $('#bg-profil');
     $btn_bg = $('.bg-btn');
@@ -208,11 +222,11 @@ demo = {
         };
 
         Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
-        let aktif = $("#aktif").val();
-        let non_aktif = $("#non-aktif").val();
+        let aktif = parseInt($("#aktif").val());
+        let non_aktif = parseInt($("#non-aktif").val());
         Chartist.Pie('#chartPreferences', {
             labels: [aktif+" tautan", non_aktif+" tautan"],
-            series: [aktif, non_aktif]
+            series: [aktif,non_aktif]
         });
 
 
@@ -272,7 +286,7 @@ demo = {
             }]
         ];
 
-        var chartHours = Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
+        // var chartHours = Chartist.Line('#chartHours', dataSales, optionsSales, responsiveSales);
 
         // lbd.startAnimationForLineChart(chartHours);
 

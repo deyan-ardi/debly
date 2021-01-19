@@ -32,13 +32,13 @@
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group">
-                                <input type="text" readonly class="form-control"
+                                <input type="text" readonly class="form-control" id="data-url-new"
                                     value="<?= $this->encryption->decrypt($links[0]['new_url']) ?>">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <button type="button" name="submit" value="1"
+                                <button type="button" onclick="copyNew()" name="submit" value="1" id="copy-new"
                                     class="btn btn-info btn-fill pull-right">Salin
                                     Tautan</button>
                             </div>

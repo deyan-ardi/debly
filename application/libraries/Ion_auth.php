@@ -129,8 +129,63 @@ class Ion_auth
 		return get_instance()->$var;
 	}
 
+	// /**
+	//  * Forgotten password feature
+	//  *
+	//  * @param string $identity
+	//  *
+	//  * @return array|bool
+	//  * @author Mathew
+	//  */
+	// public function forgotten_password($identity)
+	// {
+	// 	// Retrieve user information
+	// 	$user = $this->where($this->ion_auth_model->identity_column, $identity)
+	// 				 ->where('active', 1)
+	// 				 ->users()->row();
+
+	// 	if ($user)
+	// 	{
+	// 		// Generate code
+	// 		$code = $this->ion_auth_model->forgotten_password($identity);
+
+	// 		if ($code)
+	// 		{
+	// 			$data = [
+	// 				'identity' => $identity,
+	// 				'forgotten_password_code' => $code
+	// 			];
+
+	// 			if (!$this->config->item('use_ci_email', 'ion_auth'))
+	// 			{
+	// 				$this->set_message('forgot_password_successful');
+	// 				return $data;
+	// 			}
+	// 			else
+	// 			{
+	// 				$message = $this->load->view($this->config->item('email_templates', 'ion_auth') . $this->config->item('email_forgot_password', 'ion_auth'), $data, TRUE);
+	// 				$this->email->clear();
+	// 				$this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
+	// 				$this->email->to($user->email);
+	// 				$this->email->subject($this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject'));
+	// 				$this->email->message($message);
+
+	// 				if ($this->email->send())
+	// 				{
+	// 					$this->set_message('forgot_password_successful');
+	// 					return TRUE;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+
+	// 	$this->set_error('forgot_password_unsuccessful');
+	// 	return FALSE;
+	// }
+
+
 	/**
-	 * Forgotten password feature
+	 * Forgotten password or resend activation email feature
 	 *
 	 * @param string $identity
 	 *
@@ -139,30 +194,25 @@ class Ion_auth
 	 */
 	public function forgotten_password($identity)
 	{
-		// Retrieve user information
+		// Retrieve activated user information
 		$user = $this->where($this->ion_auth_model->identity_column, $identity)
-					 ->where('active', 1)
-					 ->users()->row();
+			->where('active', 1)
+			->users()->row();
 
-		if ($user)
-		{
+		if ($user) {
 			// Generate code
 			$code = $this->ion_auth_model->forgotten_password($identity);
 
-			if ($code)
-			{
+			if ($code) {
 				$data = [
 					'identity' => $identity,
 					'forgotten_password_code' => $code
 				];
 
-				if (!$this->config->item('use_ci_email', 'ion_auth'))
-				{
+				if (!$this->config->item('use_ci_email', 'ion_auth')) {
 					$this->set_message('forgot_password_successful');
 					return $data;
-				}
-				else
-				{
+				} else {
 					$message = $this->load->view($this->config->item('email_templates', 'ion_auth') . $this->config->item('email_forgot_password', 'ion_auth'), $data, TRUE);
 					$this->email->clear();
 					$this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
@@ -170,12 +220,59 @@ class Ion_auth
 					$this->email->subject($this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_forgotten_password_subject'));
 					$this->email->message($message);
 
-					if ($this->email->send())
-					{
+					if ($this->email->send()) {
 						$this->set_message('forgot_password_successful');
 						return TRUE;
 					}
 				}
+			}
+		}
+
+
+
+		// Retrieve not activated user information
+		$user = $this->where($this->ion_auth_model->identity_column, $identity)
+		->users()->row();
+
+		if ($user) {
+
+			// deactivate so the user must follow the activation flow
+			$deactivate = $this->deactivate($user->id);
+
+			// the deactivate method call adds a message, here we need to clear that
+			$this->ion_auth_model->clear_messages();
+
+
+			if (!$deactivate) {
+				$this->set_error('deactivate_unsuccessful');
+				$this->ion_auth_model->trigger_events(['post_account_creation', 'post_account_creation_unsuccessful']);
+				return FALSE;
+			}
+
+
+			$activation_code = $this->ion_auth_model->activation_code;
+			$identity        = $this->config->item('identity', 'ion_auth');
+			$user            = $this->ion_auth_model->user($user->id)->row();
+
+			$data = [
+				'identity'   => $user->{$identity},
+				'id'         => $user->id,
+				'email'      => $user->email,
+				'activation' => $activation_code,
+			];
+
+			$message = $this->load->view($this->config->item('email_templates', 'ion_auth') . $this->config->item('email_activate', 'ion_auth'), $data, TRUE);
+
+			$this->email->clear();
+			$this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
+			$this->email->to($user->email);
+			$this->email->subject($this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_activation_subject'));
+			$this->email->message($message);
+
+			if ($this->email->send() === TRUE) {
+				$this->ion_auth_model->trigger_events(['post_account_creation', 'post_account_creation_successful', 'activation_email_successful']);
+				$this->set_message('activation_email_successful');
+				return TRUE;
 			}
 		}
 

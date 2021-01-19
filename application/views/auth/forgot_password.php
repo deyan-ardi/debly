@@ -1,15 +1,72 @@
-<h1><?php echo lang('forgot_password_heading');?></h1>
-<p><?php echo sprintf(lang('forgot_password_subheading'), $identity_label);?></p>
+<!-- main body - start
+			================================================== -->
+<main>
 
-<div id="infoMessage"><?php echo $message;?></div>
 
-<?php echo form_open("auth/forgot_password");?>
+    <!-- breadcrumb_section - start
+				================================================== -->
+    <section id="breadcrumb_section"
+        class="breadcrumb_section bg_gradient_blue deco_wrap d-flex align-items-center text-white clearfix">
+        <div class="container">
+            <div class="breadcrumb_content text-center" data-aos="fade-up" data-aos-delay="100">
+                <h1 class="page_title">Masuk</h1>
+                <p class="mb-0">
+                    Mendaftar untuk membuka akses ke semua fitur premium yang tersedia. Kami mengutamakan privasi Anda,
+                    seluruh data yang diberikan Akan dienkripsi sehingga hanya Anda yang mengetahui data tersebut, tidak
+                    ada yang lain diantaranya, bahkan Deb.ly
+                </p>
+            </div>
+        </div>
 
-      <p>
-      	<label for="identity"><?php echo (($type=='email') ? sprintf(lang('forgot_password_email_label'), $identity_label) : sprintf(lang('forgot_password_identity_label'), $identity_label));?></label> <br />
-      	<?php echo form_input($identity);?>
-      </p>
+        <div class="deco_image spahe_1" data-aos="fade-down" data-aos-delay="300">
+            <img src="<?= base_url() ?>assets/images/shapes/shape_1.png" alt="spahe_not_found">
+        </div>
+        <div class="deco_image spahe_2" data-aos="fade-up" data-aos-delay="500">
+            <img src="<?= base_url() ?>assets/images/shapes/shape_2.png" alt="spahe_not_found">
+        </div>
+    </section>
+    <!-- breadcrumb_section - end
+				================================================== -->
 
-      <p><?php echo form_submit('submit', lang('forgot_password_submit_btn'));?></p>
 
-<?php echo form_close();?>
+    <!-- register_section - start
+				================================================== -->
+    <section id="register_section" class="register_section sec_ptb_120 bg_gray half_bg_white clearfix">
+        <div class="container">
+            <div
+                class="row align-items-center justify-content-lg-between justify-content-md-center justify-content-sm-center">
+
+                <div class="col-lg-6 col-md-7 order-last">
+                    <div class="signin_image" data-aos="fade-up" data-aos-delay="300">
+                        <img src="<?= base_url() ?>assets/images/register/img_1.png" alt="image_not_found">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-7 col-sm-8">
+                    <div class="section_title increase_size mb-80" data-aos="fade-up" data-aos-delay="400">
+                        <h2 class="title_text mb-30">Lupa Kata Sandi</h2>
+                    </div>
+                    <?php if (isset($message)) { ?>
+                    <div class="alert alert-danger col-lg-12">
+                        <span><?php echo $message; ?></span>
+                    </div>
+                    <?php } ?>
+                    <div class="reg_form signin_form" data-aos="fade-up" data-aos-delay="500">
+                        <?php echo form_open("auth/forgot_password"); ?>
+                        <div class="form_item">
+                            <h4 class="input_title">Masukkan Email</h4>
+                            <?php echo form_input($identity); ?>
+                        </div>
+                        <button type="submit" name="submit" class="btn bg_default_blue mb-30">Kirim Email
+                            Aktivasi</button>
+                        <?php echo form_close(); ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- register_section - end
+				================================================== -->
+</main>
+<!-- main body - end
+			================================================== -->

@@ -141,12 +141,18 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <?php if (empty($ditambahkan)) { ?>
+                                            <p>
+                                                Belum Ada Aktifitas
+                                            </p>
+                                            <?php } else { ?>
                                             <p>
                                                 Tautan <span
                                                     class="text-info">""<?= $this->encryption->decrypt($ditambahkan[0]['new_url']) ?>"</span>
                                                 Telah
                                                 Berhasil Ditambahkan
                                             </p>
+                                            <?php }?>
                                         </td>
                                     </tr>
                                     <tr>
@@ -158,12 +164,18 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <?php if (empty($dihapus)) { ?>
+                                            <p>
+                                                Belum Ada Aktifitas
+                                            </p>
+                                            <?php } else { ?>
                                             <p>
                                                 Tautan <span
                                                     class="text-info">"<?= $this->encryption->decrypt($dihapus[0]['new_url']) ?>"</span>
                                                 Telah
                                                 Berhasil Dinon-aktifkan
                                             </p>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                     <tr>
