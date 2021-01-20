@@ -29,7 +29,7 @@
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/magnific-popup.css">
 
     <!-- custom - css include -->
-    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/main.css">
 
 </head>
 

@@ -436,9 +436,18 @@ if ( ! function_exists('show_404'))
 	 */
 	function show_404($page = '', $log_error = TRUE)
 	{
-		$_error =& load_class('Exceptions', 'core');
-		$_error->show_404($page, $log_error);
-		exit(4); // EXIT_UNKNOWN_FILE
+		// $_error =& load_class('Exceptions', 'core');
+		// $_error->show_404($page, $log_error);
+		// exit(4); // EXIT_UNKNOWN_FILE
+		$ci = get_instance();
+		$ci->output->set_status_header(404);
+		$ci->data['title'] = "Deb.ly - Persingkat Tautan & Kustomisasi Tautan";
+		$ci->data['id'] = 0;
+		$ci->load->view('master/header', $ci->data);
+		$ci->load->view('404/index', $ci->data);
+		$ci->load->view('master/footer', $ci->data);
+		echo $ci->output->get_output();
+		exit(4);
 	}
 }
 

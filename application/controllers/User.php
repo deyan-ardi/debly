@@ -11,11 +11,11 @@ class User extends CI_Controller
         $sql = $this->All_model->getAllLinkWhereIP($ip);
         foreach ($sql as $data) {
             $cek_status = date_diff(date_create(), date_create($data['create_date']));
-            if ($cek_status->i > 1 && $data['akses'] == 0) {
+            if ($cek_status->d > 90 && $data['akses'] == 0) {
                 $this->All_model->changeStatus($data['new_url']);
             }
             // Jika sudah lebih dari 3 hari, maka history akan diset off
-            if ($cek_status->i >= 2 && $data['akses'] == 0) {
+            if ($cek_status->d >= 2 && $data['akses'] == 0) {
                 $this->All_model->changeHistory($data['new_url']);
                 $cookie_1 = "url-1";
                 $expire = time() - 1;

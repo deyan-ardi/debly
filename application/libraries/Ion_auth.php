@@ -223,6 +223,8 @@ class Ion_auth
 					if ($this->email->send()) {
 						$this->set_message('forgot_password_successful');
 						return TRUE;
+					} else {
+						echo $this->email->print_debugger();
 					}
 				}
 			}
@@ -271,8 +273,10 @@ class Ion_auth
 
 			if ($this->email->send() === TRUE) {
 				$this->ion_auth_model->trigger_events(['post_account_creation', 'post_account_creation_successful', 'activation_email_successful']);
-				$this->set_message('activation_email_successful');
+				$this->set_message('activation_email_again_successful');
 				return TRUE;
+			} else {
+				echo $this->email->print_debugger();
 			}
 		}
 

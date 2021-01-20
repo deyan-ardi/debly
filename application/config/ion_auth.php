@@ -130,8 +130,8 @@ $config['argon2_admin_params']		= [
  | The library will fail for empty password or password size above 4096 bytes.
  | This is an arbitrary (long) value to protect against DOS attack.
  */
-$config['site_title']                 = "Debly.cc";       // Site Title, example.com
-$config['admin_email']                = "ganatech.id@gmail.com"; // Admin Email, admin@example.com
+$config['site_title']                 = "Ganatech Id";       // Site Title, example.com
+$config['admin_email']                = "info.ganatech@debly.cc"; // Admin Email, admin@example.com
 $config['default_group']              = 'members';           // Default group, use name
 $config['admin_group']                = 'admin';             // Default administrators group, use name
 $config['identity']                   = 'email';             /* You can use any unique column in your table as identity column.
@@ -185,9 +185,9 @@ $config['remember_cookie_name'] = 'remember_code';
 $config['use_ci_email'] = TRUE; // Send Email using the builtin CI email class, if false it will return the code and the identity
 $config['email_config'] = [
 	'protocol'  => 'smtp',
-	'smtp_host' => 'ssl://smtp.googlemail.com',
-	'smtp_user' => 'ganatech.id@gmail.com',
-	'smtp_pass' => '-ganatech2020-',
+	'smtp_host' => 'ssl://mail.debly.cc',
+	'smtp_user' => 'info.ganatech@debly.cc',
+	'smtp_pass' => '-*Clsg11*-',
 	'smtp_port' => 465,
 	'mailtype'  => 'html',
 	'charset'   => 'utf-8',

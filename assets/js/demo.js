@@ -224,6 +224,7 @@ demo = {
         Chartist.Pie('#chartPreferences', dataPreferences, optionsPreferences);
         let aktif = parseInt($("#aktif").val());
         let non_aktif = parseInt($("#non-aktif").val());
+        console.log(aktif);
         Chartist.Pie('#chartPreferences', {
             labels: [aktif+" tautan", non_aktif+" tautan"],
             series: [aktif,non_aktif]
@@ -594,3 +595,4 @@ const copyOld= () => {
     document.getElementById('data-url-old').select();
     document.execCommand("copy");
 }
+
