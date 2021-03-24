@@ -1,8 +1,7 @@
 <?php
 header('Content-type: application/xml; charset="ISO-8859-1"', true);
 ?>
-<urlset
-    xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <!--
  created with Free Online Sitemap Generator www.xml-sitemaps.com 
 -->
