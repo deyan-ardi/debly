@@ -53,6 +53,7 @@ $route['default_controller'] = 'user';
 $route['404_override'] = 'Info_404';
 $route['singkat'] = 'user/singkat';
 $route['login'] = 'auth/login';
+$route['sitemap\.xml'] = 'sitemap';
 $route['register'] = 'auth/create_user';
 $route['forgot_password'] = 'auth/forgot_password';
 $route['user/dashboard'] = 'auth/index';
